@@ -9,13 +9,13 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 ```{r libraries}
-library(ggplot2)
+library("ggplot2")
 ```
 
 ```{r load_data}
-#NEI <- readRDS("data/summarySCC_PM25.rds")
-#NEI$year <- as.Date(as.character(NEI$year), "%Y")
-#SCC <- readRDS("data/Source_Classification_Code.rds")
+NEI <- readRDS("data/summarySCC_PM25.rds")
+NEI$year <- as.Date(as.character(NEI$year), "%Y")
+SCC <- readRDS("data/Source_Classification_Code.rds")
 ```
 Questions
 You must address the following questions and tasks in your exploratory analysis. For each question/task you will need to make a single plot. Unless specified, you can use any plotting system in R to make your plot.
@@ -48,7 +48,8 @@ ggplot(data=baltag, aes(year, Emissions)) + facet_grid(cols = vars(type)) + geom
 Across the United States, how have emissions from coal combustion-related sources changed from 1999–2008?
 ```{r question4}
 g <- grep("Coal", SCC$Short.Name)
-SCC[g,"Short.Name"]
+total <- aggregate(data=merge(NEI,SCC[g,]), Emissions ~ year, sum)
+ggplot(data=total) + aes(x=year, y=Emissions) + geom_point()
 ```
 
 ## Question 5
