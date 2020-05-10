@@ -1,0 +1,7 @@
+NEI <- readRDS("data/summarySCC_PM25.rds")
+NEI$year <- as.Date(as.character(NEI$year), "%Y")
+baltimore <- subset(NEI, fips=="24510")
+total_emissions_baltimore <- with(baltimore, tapply(Emissions, year, sum))
+png(filename = "plot2.png")
+plot(total_emissions_baltimore, pch=19)
+dev.off()

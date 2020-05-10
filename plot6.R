@@ -1,0 +1,11 @@
+NEI <- readRDS("data/summarySCC_PM25.rds")
+NEI$year <- as.Date(as.character(NEI$year), "%Y")
+SCC <- readRDS("data/Source_Classification_Code.rds")
+balt_la <- subset(NEI, fips %in% c("24510","06037"))
+balt_la <- merge(balt_la, SCC)
+balt_la_veh <- balt_la[grep("Veh", balt_la$Short.Name),]
+g <- aggregate(data=balt_la_veh, Emissions ~ year+ fips, sum)
+g$fips <- replace(g$fips, g$fips=="06037", "LA, California")
+g$fips <- replace(g$fips, g$fips=="24510", "Baltimore City")
+ggplot(data=g) + aes(x=year, y=log(Emissions), col=fips) + geom_point()
+ggsave("plot6.png")

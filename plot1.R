@@ -1,0 +1,6 @@
+NEI <- readRDS("data/summarySCC_PM25.rds")
+NEI$year <- as.Date(as.character(NEI$year), "%Y")
+total_emissions <- aggregate(data=NEI, Emissions ~ year, sum)
+png(filename = "plot1.png")
+plot(total_emissions, pch=19)
+dev.off()

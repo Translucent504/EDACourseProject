@@ -24,7 +24,8 @@ You must address the following questions and tasks in your exploratory analysis.
 Have total emissions from PM2.5 decreased in the United States from 1999 to 2008? Using the base plotting system, make a plot showing the total PM2.5 emission from all sources for each of the years 1999, 2002, 2005, and 2008.
 ```{r question1}
 
-total_emissions <- with(NEI, tapply(Emissions, year, sum))
+#total_emissions <- with(NEI, tapply(Emissions, year, sum))
+total_emissions <- aggregate(data=NEI, Emissions ~ year, sum)
 plot(total_emissions, pch=19)
 ```
 
@@ -55,12 +56,24 @@ ggplot(data=total) + aes(x=year, y=Emissions) + geom_point()
 ## Question 5
 How have emissions from motor vehicle sources changed from 1999–2008 in Baltimore City?
 ```{r question5}
-
+baltimore <- subset(NEI, fips=="24510")
+balt_veh <- merge(baltimore, SCC)
+balt_veh <- balt_veh[grep("Veh", balt_veh$Short.Name),]
+balt_veh <- aggregate(data=balt_veh, Emissions ~ year+ fips, sum)
+ggplot(data=balt_veh) + aes(x=year, y=Emissions) + geom_point()
 ```
 
 ## Question 6
-Compare emissions from motor vehicle sources in Baltimore City with emissions from motor vehicle sources in Los Angeles County, California (\color{red}{\verb|fips == "06037"|}fips == "06037"). Which city has seen greater changes over time in motor vehicle emissions?
+Compare emissions from motor vehicle sources in Baltimore City with emissions from motor vehicle sources in Los Angeles County, California fips == "06037". Which city has seen greater changes over time in motor vehicle emissions?
 ```{r question6}
+LA <- subset(NEI, fips=="06037")
+LA_veh <- merge(LA, SCC)
+LA_veh <- LA_veh[grep("Veh", LA_veh$Short.Name),]
+LA_veh <- aggregate(data=LA_veh, Emissions ~ year+ fips, sum)
+g <- rbind(balt_veh, LA_veh)
+g$fips <- replace(g$fips, g$fips=="06037", "LA, California")
+g$fips <- replace(g$fips, g$fips=="24510", "Baltimore City")
+ggplot(data=g) + aes(x=year, y=log(Emissions), col=fips) + geom_point()
 
 ```
 
@@ -68,6 +81,6 @@ Compare emissions from motor vehicle sources in Baltimore City with emissions fr
 For each plot you should
 
 - Construct the plot and save it to a PNG file.
-- Create a separate R code file (\color{red}{\verb|plot1.R|}plot1.R, \color{red}{\verb|plot2.R|}plot2.R, etc.) that constructs the corresponding plot, i.e. code in plot1.R constructs the plot1.png plot. Your code file should include code for reading the data so that the plot can be fully reproduced. You must also include the code that creates the PNG file. Only include the code for a single plot (i.e. \color{red}{\verb|plot1.R|}plot1.R should only include code for producing \color{red}{\verb|plot1.png|}plot1.png)
+- Create a separate R code file plot1.R, plot2.R etc. that constructs the corresponding plot, i.e. code in plot1.R constructs the plot1.png plot. Your code file should include code for reading the data so that the plot can be fully reproduced. You must also include the code that creates the PNG file. Only include the code for a single plot (i.e. \color{red}{\verb|plot1.R|}plot1.R should only include code for producing \color{red}{\verb|plot1.png|}plot1.png)
 - Upload the PNG file on the Assignment submission page
 - Copy and paste the R code from the corresponding R file into the text box at the appropriate point in the peer assessment.

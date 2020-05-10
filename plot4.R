@@ -1,0 +1,7 @@
+NEI <- readRDS("data/summarySCC_PM25.rds")
+NEI$year <- as.Date(as.character(NEI$year), "%Y")
+SCC <- readRDS("data/Source_Classification_Code.rds")
+g <- grep("Coal", SCC$Short.Name)
+total <- aggregate(data=merge(NEI,SCC[g,]), Emissions ~ year, sum)
+ggplot(data=total) + aes(x=year, y=Emissions) + geom_point()
+ggsave("plot4.png")

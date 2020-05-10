@@ -1,0 +1,7 @@
+library("ggplot2")
+NEI <- readRDS("data/summarySCC_PM25.rds")
+NEI$year <- as.Date(as.character(NEI$year), "%Y")
+baltimore <- subset(NEI, fips=="24510")
+baltag <- aggregate(data=baltimore, Emissions ~ year + type, sum)
+ggplot(data=baltag, aes(year, Emissions)) + facet_grid(cols = vars(type)) + geom_point()
+ggsave("plot3.png")
